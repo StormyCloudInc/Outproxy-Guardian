@@ -37,15 +37,15 @@ Below is an example configuration. You **must** edit the URLs and your Discord w
 [proxies]
 # Add your HAProxy frontends and Tinyproxy backends here
 # The format is: name = url
-haproxy-1 = [http://127.0.0.1:8080](http://127.0.0.1:8080)
-haproxy-2 = [http://127.0.0.1:8081](http://127.0.0.1:8081)
-tinyproxy-1 = [http://127.0.0.1:8888](http://127.0.0.1:8888)
-tinyproxy-2 = [http://127.0.0.1:8889](http://127.0.0.1:8889)
+haproxy-1 = 127.0.0.1:8080
+haproxy-2 = 127.0.0.1:8081
+tinyproxy-1 = 127.0.0.1:8888
+tinyproxy-2 = 127.0.0.1:8889
 
 [user_test]
 # This is a special test to simulate a user connection through the I2P network
 # This can be the same as one of your haproxy frontends
-i2p-user-test = [http://127.0.0.1:4444](http://127.0.0.1:4444)
+i2p-user-test = 127.0.0.1:4444
 
 [settings]
 # Interval in seconds between each check run
@@ -60,7 +60,7 @@ discord_webhook_url = YOUR_DISCORD_WEBHOOK_URL
 
 [api]
 # The API used to verify the proxy is working and get the exit IP
-url = [https://api.ipify.org?format=json](https://api.ipify.org?format=json)
+url = https://api.ipify.org?format=json
 ```
 
 ## Running the Application
@@ -72,8 +72,8 @@ url = [https://api.ipify.org?format=json](https://api.ipify.org?format=json)
     ```
 3.  The script will start the background checker and the web server. You will see output like this:
     ```
-    --- Starting Flask API server on [http://127.0.0.1:5000](http://127.0.0.1:5000) ---
-    --- Access the dashboard at [http://127.0.0.1:5000](http://127.0.0.1:5000) ---
+    --- Starting Flask API server on http://127.0.0.1:5000---
+    --- Access the dashboard at http://127.0.0.1:5000---
     ```
 4.  Open your web browser and navigate to `http://127.0.0.1:5000` to view the dashboard.
 
