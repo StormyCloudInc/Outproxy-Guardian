@@ -136,7 +136,7 @@ def check_proxy(proxy):
     proxies = {'http': proxy['url'], 'https': proxy['url']}
     start_time = time.time()
     try:
-        response = requests.get(API_URL, proxies=proxies, timeout=10)
+        response = requests.get(API_URL, proxies=proxies, timeout=30)
         response_time_ms = (time.time() - start_time) * 1000
         if response.status_code == 200:
             ip_address = response.json().get('ip')
