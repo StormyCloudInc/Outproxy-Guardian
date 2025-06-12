@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I2P Outproxy Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+    <style>
+        body {
+            background-color: #111827; /* bg-gray-900 */
+            color: #d1d5db; /* text-gray-300 */
+        }
+        .proxy-card {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold text-white">I2P Outproxy Status</h1>
+            <p class="text-gray-400 mt-2">Live dashboard monitoring the health of all proxies.</p>
+        </header>
+
+        <div id="proxy-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Proxy cards will be inserted here by JavaScript -->
+        </div>
+        
+        <!-- Modal for showing historical data graph -->
+        <div id="graph-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+            <div class="bg-gray-800 rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/2 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="modal-title" class="text-2xl font-bold text-white">Response Time History</h2>
+                    <button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+                </div>
+                <div>
+                    <canvas id="response-time-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        dayjs.extend(dayjs_plugin_relativeTime);
+
+        const API_BASE_URL = 'http://127.0.0.1:5000/api';
+        const proxyGrid = document.getElementById('proxy-grid');
+        const modal = document.getElementById('graph-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        let responseTimeChart = null;
+
+        function formatUptimeDuration(days, seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            let durationStr = '';
+            if (days > 0) durationStr += `${days}d `;
+            if (hours > 0) durationStr += `${hours}h `;
+            if (minutes > 0) durationStr += `${minutes}m`;
+            return durationStr.trim() || '0m';
+        }
+        
+        function createProxyCard(proxy) {
+            const isOnline = proxy.status === 'online';
+            const card = document.createElement('div');
+            card.className = `proxy-card bg-gray-800 rounded-xl shadow-lg p-5 border-l-4 ${isOnline ? 'border-green-500' : 'border-red-500'}`;
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-white">${proxy.name}</h3>
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full ${isOnline ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                        ${isOnline ? 'Online' : 'Offline'}
+                    </span>
+                </div>
+                <div class="mt-4 space-y-3 text-sm text-gray-400">
+                    <p><strong>Uptime:</strong> <span class="font-mono text-white">${proxy.uptime_percentage}%</span></p>
+                    <p><strong>Uptime Length:</strong> <span class="font-mono text-white">${formatUptimeDuration(proxy.uptime_duration_days, proxy.uptime_duration_seconds)}</span></p>
+                    <p><strong>Last Check:</strong> <span class="font-mono text-white">${dayjs(proxy.last_checked + 'Z').fromNow()}</span></p>
+                    <p><strong>Last Seen IP:</strong> <span class="font-mono text-white">${proxy.last_ip || 'N/A'}</span></p>
+                </div>
+                <div class="mt-5">
+                    <button class="view-history-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition" data-proxy-name="${proxy.name}">
+                        View History
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function fetchAndDisplayProxies() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/status`);
+                if (!response.ok) {
+                    proxyGrid.innerHTML = `<p class="text-center text-red-400 col-span-full">Error fetching data. Is the backend server running?</p>`;
+                    return;
+                }
+                const proxies = await response.json();
+                proxyGrid.innerHTML = ''; // Clear existing cards
+
+                // Sort proxies: offline first, then by name
+                proxies.sort((a, b) => {
+                    if (a.status === 'offline' && b.status === 'online') return -1;
+                    if (a.status === 'online' && b.status === 'offline') return 1;
+                    return a.name.localeCompare(b.name); // Then sort alphabetically
+                }).forEach(proxy => {
+                    const card = createProxyCard(proxy);
+                    proxyGrid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Fetch error:', error);
+                proxyGrid.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not connect to the backend. Please ensure it's running on ${API_BASE_URL}.</p>`;
+            }
+        }
+
+        async function openGraphModal(proxyName) {
+            modalTitle.innerText = `Response Time History for ${proxyName}`;
+            modal.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/history/${proxyName}`);
+                const historyData = await response.json();
+
+                const labels = historyData.map(d => dayjs(d.timestamp).format('MM-DD HH:mm'));
+                const data = historyData.map(d => d.response_time);
+
+                const chartCanvas = document.getElementById('response-time-chart');
+                if (responseTimeChart) {
+                    responseTimeChart.destroy();
+                }
+                responseTimeChart = new Chart(chartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Response Time (ms)',
+                            data: data,
+                            borderColor: 'rgba(59, 130, 246, 0.8)', // blue-500
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                       scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#d1d5db' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#d1d5db' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: '#d1d5db' }
+                            }
+                        }
+                    }
+                });
+            } catch(error) {
+                console.error("Error fetching history:", error);
+            }
+        }
+        
+        // Event Listeners
+        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => {
+             if (e.target === modal) {
+                 modal.classList.add('hidden');
+             }
+        });
+
+        proxyGrid.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('view-history-btn')) {
+                const proxyName = e.target.getAttribute('data-proxy-name');
+                openGraphModal(proxyName);
+            }
+        });
+        
+        // Initial fetch and set interval to refresh data
+        fetchAndDisplayProxies();
+        setInterval(fetchAndDisplayProxies, 15000); // Refresh every 15 seconds
+    </script>
+
+</body>
+</html>
