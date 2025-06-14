@@ -48,7 +48,8 @@
     <script>
         dayjs.extend(dayjs_plugin_relativeTime);
 
-        const API_BASE_URL = 'http://127.0.0.1:5000/api';
+        // This now uses a relative path, so it will work on any server IP or domain.
+        const API_BASE_URL = '/api';
         const proxyGrid = document.getElementById('proxy-grid');
         const modal = document.getElementById('graph-modal');
         const modalTitle = document.getElementById('modal-title');
@@ -113,7 +114,7 @@
 
             } catch (error) {
                 console.error('Fetch error:', error);
-                proxyGrid.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not connect to the backend. Please ensure it's running on ${API_BASE_URL}.</p>`;
+                proxyGrid.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not connect to the backend. Please ensure it's running.</p>`;
             }
         }
 
