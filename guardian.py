@@ -136,7 +136,7 @@ def check_proxy(proxy):
     proxies = {'http': proxy['url'], 'https': proxy['url']}
     start_time = time.time()
     try:
-        response = requests.get(API_URL, proxies=proxies, timeout=30)
+        response = requests.get(API_URL, proxies=proxies, timeout=10)
         response_time_ms = (time.time() - start_time) * 1000
         if response.status_code == 200:
             ip_address = response.json().get('ip')
@@ -215,6 +215,6 @@ if __name__ == '__main__':
     setup_database()
     checker_thread = threading.Thread(target=main_loop, daemon=True)
     checker_thread.start()
-    print("--- Starting Flask API server on http://127.0.0.1:5000 ---")
-    print("--- Access the dashboard at http://127.0.0.1:5000 ---")
-    app.run(host='127.0.0.1', port=5000)
+    print("--- Starting Flask API server on http://0.0.0.0:5000 ---")
+    print("--- Access the dashboard at http://<YOUR_SERVER_IP>:5000 ---")
+    app.run(host='0.0.0.0', port=5000)
