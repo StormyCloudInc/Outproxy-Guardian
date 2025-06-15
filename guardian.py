@@ -136,7 +136,8 @@ def check_proxy(proxy):
     proxies = {'http': proxy['url'], 'https': proxy['url']}
     start_time = time.time()
     try:
-        response = requests.get(API_URL, proxies=proxies, timeout=20)
+        # Increased timeout to 30 seconds for better reliability over I2P
+        response = requests.get(API_URL, proxies=proxies, timeout=30)
         response_time_ms = (time.time() - start_time) * 1000
         if response.status_code == 200:
             ip_address = response.json().get('ip')
@@ -145,7 +146,8 @@ def check_proxy(proxy):
             return {'status': 'offline', 'response_time': response_time_ms, 'ip': None}
     except requests.exceptions.RequestException as e:
         response_time_ms = (time.time() - start_time) * 1000
-        print(f"Error checking {proxy['name']}: {e}")
+        # Added more detailed error logging
+        print(f"Error checking {proxy['name']}. Type: {type(e).__name__}, Details: {e}")
         return {'status': 'offline', 'response_time': response_time_ms, 'ip': None}
 
 def record_status(proxy_name, result):
