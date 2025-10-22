@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback System - Widget Examples</title>
+    <link rel="stylesheet" href="http://localhost:5000/widgets/styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .widget-demo {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .widget-demo h2 {
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .widget-demo .description {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .widget-demo .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .widget-demo .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #333;
+            white-space: pre;
+        }
+        .widget-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Feedback System - Widget Examples</h1>
+    <p class="subtitle">Live examples of all embeddable widgets</p>
+
+    <!-- Feedback Widget Example -->
+    <div class="widget-demo">
+        <h2>1. Document Feedback Widget</h2>
+        <p class="description">
+            A simple thumbs up/down widget for gathering feedback on pages or documents.
+            Thumbs up saves to database, thumbs down sends an email notification.
+        </p>
+
+        <div class="widget-container">
+            <div id="feedback-widget"
+                 data-document-id="example-page"
+                 data-api-url="http://localhost:5000">
+            </div>
+        </div>
+
+        <div class="code-block">
+            <code>&lt;!-- Add container --&gt;
+&lt;div id="feedback-widget"
+     data-document-id="example-page"
+     data-api-url="http://localhost:5000"&gt;
+&lt;/div&gt;
+
+&lt;!-- Load widget script --&gt;
+&lt;script src="http://localhost:5000/widgets/feedback.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="http://localhost:5000/widgets/styles.css"&gt;</code>
+        </div>
+    </div>
+
+    <!-- Poll Widget Example -->
+    <div class="widget-demo">
+        <h2>2. Voting/Poll Widget</h2>
+        <p class="description">
+            Interactive poll widget with real-time results. Create polls in the admin panel first.
+            Note: This example uses poll ID 1 - create a poll in the admin panel to test.
+        </p>
+
+        <div class="widget-container">
+            <div id="poll-widget"
+                 data-poll-id="1"
+                 data-api-url="http://localhost:5000"
+                 data-show-results="false">
+            </div>
+        </div>
+
+        <div class="code-block">
+            <code>&lt;!-- Add container --&gt;
+&lt;div id="poll-widget"
+     data-poll-id="1"
+     data-api-url="http://localhost:5000"
+     data-show-results="false"&gt;
+&lt;/div&gt;
+
+&lt;!-- Load widget script --&gt;
+&lt;script src="http://localhost:5000/widgets/voting.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="http://localhost:5000/widgets/styles.css"&gt;</code>
+        </div>
+    </div>
+
+    <!-- Features Widget Example -->
+    <div class="widget-demo">
+        <h2>3. Feature Request Widget</h2>
+        <p class="description">
+            Combined submission form and feature list with upvoting. Users can submit new features
+            and upvote existing ones. Developers can manage status in the admin panel.
+        </p>
+
+        <div class="widget-container">
+            <div id="features-widget"
+                 data-api-url="http://localhost:5000"
+                 data-mode="both"
+                 data-max-items="5">
+            </div>
+        </div>
+
+        <div class="code-block">
+            <code>&lt;!-- Add container --&gt;
+&lt;div id="features-widget"
+     data-api-url="http://localhost:5000"
+     data-mode="both"
+     data-max-items="5"&gt;
+&lt;/div&gt;
+
+&lt;!-- Load widget script --&gt;
+&lt;script src="http://localhost:5000/widgets/features.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="http://localhost:5000/widgets/styles.css"&gt;
+
+&lt;!-- Modes: "list" (show list only), "submit" (form only), "both" (default) --&gt;</code>
+        </div>
+    </div>
+
+    <div class="widget-demo">
+        <h2>Getting Started</h2>
+        <p class="description">
+            <strong>1. Start the backend server:</strong><br>
+            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 3px;">
+                cd backend && python app.py
+            </code>
+        </p>
+        <p class="description">
+            <strong>2. Access the admin panel:</strong><br>
+            <a href="http://localhost:5000/admin/index.html" target="_blank">
+                http://localhost:5000/admin/index.html
+            </a>
+        </p>
+        <p class="description">
+            <strong>3. Create a poll in the admin panel to test the poll widget above</strong>
+        </p>
+        <p class="description">
+            <strong>4. Embed widgets on your website by copying the code blocks above</strong>
+        </p>
+    </div>
+
+    <!-- Load widget scripts -->
+    <script src="http://localhost:5000/widgets/feedback.js"></script>
+    <script src="http://localhost:5000/widgets/voting.js"></script>
+    <script src="http://localhost:5000/widgets/features.js"></script>
+</body>
+</html>
