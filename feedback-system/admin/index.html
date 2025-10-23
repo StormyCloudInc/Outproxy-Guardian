@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback System - Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Feedback System Admin</h1>
+            <div class="admin-nav">
+                <button class="nav-btn active" data-section="polls">Polls</button>
+                <button class="nav-btn" data-section="features">Feature Requests</button>
+                <button class="nav-btn" data-section="feedback">Document Feedback</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- Polls Section -->
+            <section id="polls-section" class="admin-section active">
+                <div class="section-header">
+                    <h2>Manage Polls</h2>
+                    <button class="btn btn-primary" id="create-poll-btn">Create New Poll</button>
+                </div>
+
+                <div id="polls-list" class="content-list">
+                    <div class="loading">Loading polls...</div>
+                </div>
+
+                <!-- Create Poll Modal -->
+                <div id="create-poll-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Create New Poll</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <form id="create-poll-form">
+                            <div class="form-group">
+                                <label for="poll-title">Poll Title *</label>
+                                <input type="text" id="poll-title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="poll-description">Description</label>
+                                <textarea id="poll-description" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Options *</label>
+                                <div id="poll-options-container">
+                                    <input type="text" class="poll-option-input" placeholder="Option 1" required>
+                                    <input type="text" class="poll-option-input" placeholder="Option 2" required>
+                                </div>
+                                <button type="button" class="btn btn-secondary" id="add-option-btn">Add Option</button>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="poll-multiple-votes">
+                                    Allow multiple votes per user
+                                </label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Poll</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature Requests Section -->
+            <section id="features-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Feature Requests</h2>
+                    <div class="filters">
+                        <select id="feature-status-filter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="under_review">Under Review</option>
+                            <option value="planned">Planned</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="features-list" class="content-list">
+                    <div class="loading">Loading feature requests...</div>
+                </div>
+            </section>
+
+            <!-- Document Feedback Section -->
+            <section id="feedback-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Document Feedback Stats</h2>
+                </div>
+
+                <div class="info-box">
+                    <p>Document feedback is tracked automatically. Thumbs down feedback triggers email notifications.</p>
+                    <p>To view stats for a specific document, use the API endpoint:</p>
+                    <code>GET /api/feedback/{document_id}/stats</code>
+                </div>
+            </section>
+        </main>
+
+        <div id="notification" class="notification"></div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

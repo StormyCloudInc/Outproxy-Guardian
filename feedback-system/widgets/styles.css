@@ -1,0 +1,449 @@
+/**
+ * Feedback System Widgets Styles
+ * Lightweight, customizable styles for all widgets
+ */
+
+/* ==================== Common Styles ==================== */
+
+.feedback-widget,
+.poll-widget,
+.features-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    max-width: 100%;
+}
+
+.feedback-message,
+.poll-message,
+.features-message {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.feedback-message.success,
+.poll-message.success,
+.features-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedback-message.error,
+.poll-message.error,
+.features-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.feedback-message.info,
+.poll-message.info,
+.features-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ==================== Feedback Widget ==================== */
+
+.feedback-widget {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.feedback-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.feedback-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.feedback-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.feedback-btn:hover:not(.disabled) {
+    border-color: #0066cc;
+    background: #f0f8ff;
+}
+
+.feedback-btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.feedback-icon {
+    font-size: 20px;
+}
+
+.feedback-count {
+    font-weight: 600;
+    color: #666;
+}
+
+/* ==================== Poll Widget ==================== */
+
+.poll-widget {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.poll-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.poll-description {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.poll-options {
+    margin-bottom: 15px;
+}
+
+.poll-option-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.poll-option-btn:hover {
+    border-color: #0066cc;
+    background: #f0f8ff;
+}
+
+.poll-option-result {
+    margin-bottom: 12px;
+}
+
+.poll-option-text {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.poll-option-bar {
+    position: relative;
+    background: #e9ecef;
+    border-radius: 4px;
+    height: 30px;
+    overflow: hidden;
+}
+
+.poll-option-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #0066cc, #0052a3);
+    transition: width 0.5s ease;
+}
+
+.poll-option-stats {
+    position: relative;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    z-index: 1;
+}
+
+.poll-footer {
+    padding-top: 10px;
+    border-top: 1px solid #dee2e6;
+    color: #666;
+    font-size: 12px;
+}
+
+.poll-error {
+    padding: 15px;
+    background: #f8d7da;
+    color: #721c24;
+    border-radius: 6px;
+}
+
+/* ==================== Features Widget ==================== */
+
+.features-widget {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* Submit Form */
+
+.features-submit {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.features-submit-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #222;
+}
+
+.features-form-group {
+    margin-bottom: 15px;
+}
+
+.features-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
+}
+
+.features-form-group input,
+.features-form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.features-form-group input:focus,
+.features-form-group textarea:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.features-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .features-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.features-submit-btn {
+    padding: 12px 24px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.features-submit-btn:hover {
+    background: #0052a3;
+}
+
+/* Feature List */
+
+.features-list-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #222;
+}
+
+.features-empty {
+    padding: 40px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
+.features-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feature-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.feature-upvote {
+    flex-shrink: 0;
+}
+
+.feature-upvote-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    padding: 8px;
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.feature-upvote-btn:hover:not([disabled]) {
+    border-color: #0066cc;
+    background: #f0f8ff;
+}
+
+.feature-upvote-btn.upvoted {
+    border-color: #0066cc;
+    background: #e6f2ff;
+}
+
+.feature-upvote-btn[disabled] {
+    cursor: not-allowed;
+}
+
+.feature-upvote-icon {
+    font-size: 16px;
+    color: #666;
+}
+
+.feature-upvote-btn.upvoted .feature-upvote-icon {
+    color: #0066cc;
+}
+
+.feature-upvote-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 4px;
+}
+
+.feature-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.feature-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.feature-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #222;
+}
+
+.feature-status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.feature-status.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.feature-status.status-under-review {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.feature-status.status-planned {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.feature-status.status-in-progress {
+    background: #d4edda;
+    color: #155724;
+}
+
+.feature-status.status-completed {
+    background: #c3e6cb;
+    color: #155724;
+}
+
+.feature-status.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.feature-description {
+    color: #555;
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+}
+
+.feature-meta {
+    font-size: 12px;
+    color: #999;
+}
+
+/* ==================== Responsive ==================== */
+
+@media (max-width: 600px) {
+    .feedback-widget,
+    .poll-widget,
+    .features-widget {
+        padding: 15px;
+    }
+
+    .feedback-buttons {
+        flex-direction: column;
+    }
+
+    .feature-item {
+        flex-direction: column;
+    }
+
+    .feature-upvote {
+        align-self: flex-start;
+    }
+}
