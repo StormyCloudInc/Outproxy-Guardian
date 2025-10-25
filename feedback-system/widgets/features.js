@@ -705,11 +705,21 @@
         }
 
         formatDate(dateString) {
-            const date = new Date(dateString);
+            // Handle SQLite datetime format - append 'Z' if no timezone info to treat as UTC
+            let dateToProcess = dateString;
+            if (dateString && !dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
+                dateToProcess = dateString.replace(' ', 'T') + 'Z';
+            }
+
+            const date = new Date(dateToProcess);
             const now = new Date();
             const diffMs = now - date;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
+            if (diffDays < 0) {
+                // Future date or timezone issue - just show date
+                return date.toLocaleDateString();
+            }
             if (diffDays === 0) return 'Today';
             if (diffDays === 1) return 'Yesterday';
             if (diffDays < 7) return `${diffDays} days ago`;
