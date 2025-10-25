@@ -31,6 +31,7 @@ class Config:
         'vote': int(os.getenv('RATE_LIMIT_VOTE', 20)),  # 20 votes per hour
         'feature_submit': int(os.getenv('RATE_LIMIT_FEATURE_SUBMIT', 5)),  # 5 feature submissions per hour
         'feature_upvote': int(os.getenv('RATE_LIMIT_FEATURE_UPVOTE', 50)),  # 50 upvotes per hour
+        'comment': int(os.getenv('RATE_LIMIT_COMMENT', 10)),  # 10 comments per hour
     }
 
     # Email Configuration

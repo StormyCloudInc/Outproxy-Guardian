@@ -13,7 +13,12 @@
             <div class="admin-nav">
                 <button class="nav-btn active" data-section="polls">Polls</button>
                 <button class="nav-btn" data-section="features">Feature Requests</button>
+                <button class="nav-btn" data-section="comments">Comments</button>
+                <button class="nav-btn" data-section="mailing-list">Mailing List</button>
+                <button class="nav-btn" data-section="widgets">Widget Embed Codes</button>
                 <button class="nav-btn" data-section="feedback">Document Feedback</button>
+                <button class="nav-btn" data-section="emails">Email Stats</button>
+                <button class="nav-btn" data-section="settings">Settings</button>
             </div>
         </header>
 
@@ -66,6 +71,154 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Embed Code Modal -->
+                <div id="embed-code-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Poll Embed Code</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Copy this code to embed the poll on your website:</p>
+                            <div class="code-block" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; margin: 15px 0; position: relative;">
+                                <button class="btn btn-secondary btn-sm" id="copy-embed-btn" style="position: absolute; top: 10px; right: 10px;">Copy</button>
+                                <pre id="embed-code-content" style="margin: 0; overflow-x: auto; font-family: monospace; font-size: 13px; white-space: pre;"></pre>
+                            </div>
+                            <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                                <strong>Options:</strong><br>
+                                • <code>data-show-results="true"</code> - Show results immediately after voting<br>
+                                • <code>data-show-results="false"</code> - Hide results (default)
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary modal-close">Done</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comments Section -->
+            <section id="comments-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Feature Comments</h2>
+                    <button class="btn btn-secondary" id="refresh-comments-btn">Refresh</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Comments</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="comments-list">
+                            <div class="loading">Loading comments...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mailing List Section -->
+            <section id="mailing-list-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Mailing List</h2>
+                    <button class="btn btn-primary" id="send-broadcast-btn">Send Broadcast Email</button>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="stat-card" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Total Subscribers</div>
+                        <div style="font-size: 28px; font-weight: 600;" id="stat-mailing-total">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #d4edda; padding: 20px; border-radius: 8px; border: 1px solid #c3e6cb;">
+                        <div style="font-size: 14px; color: #155724; margin-bottom: 5px;">Active</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #155724;" id="stat-mailing-active">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                        <div style="font-size: 14px; color: #721c24; margin-bottom: 5px;">Unsubscribed</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #721c24;" id="stat-mailing-unsubscribed">-</div>
+                    </div>
+                </div>
+
+                <!-- Subscribers List -->
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <h3 style="margin-top: 0;">Subscribers</h3>
+                    <div id="mailing-list-subscribers">
+                        <div class="loading">Loading subscribers...</div>
+                    </div>
+                </div>
+
+                <!-- Send Broadcast Modal -->
+                <div id="send-broadcast-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Send Broadcast Email</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <form id="broadcast-form">
+                            <div class="form-group">
+                                <label for="broadcast-subject">Subject *</label>
+                                <input type="text" id="broadcast-subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="broadcast-message">Message (Plain Text) *</label>
+                                <textarea id="broadcast-message" rows="8" required placeholder="This will be sent as plain text in the email body..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="broadcast-html">HTML Message (Optional)</label>
+                                <textarea id="broadcast-html" rows="8" placeholder="Optional: Add HTML formatted content here..."></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Send to All Subscribers</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Widget Embed Codes Section -->
+            <section id="widgets-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Widget Embed Codes</h2>
+                    <p style="color: #666; font-size: 14px;">Copy and paste these codes into your website</p>
+                </div>
+
+                <div class="widget-code-card">
+                    <h3>Feedback Widget (Thumbs Up/Down)</h3>
+                    <p>Simple thumbs up/down feedback for any page or document</p>
+                    <div class="code-display">
+                        <button class="btn btn-secondary btn-sm copy-code-btn" style="float: right;">Copy</button>
+                        <pre class="code-content"></pre>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                        <strong>Note:</strong> Replace <code>your-page-id</code> with a unique ID for your page (e.g., "homepage", "docs-install", etc.)
+                    </p>
+                </div>
+
+                <div class="widget-code-card">
+                    <h3>Feature Request Widget</h3>
+                    <p>Allow users to submit and upvote feature requests</p>
+                    <div class="code-display">
+                        <button class="btn btn-secondary btn-sm copy-code-btn" style="float: right;">Copy</button>
+                        <pre class="code-content"></pre>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                        <strong>Modes:</strong> <code>list</code> (list only with submit button)
+                    </p>
+                </div>
+
+                <div class="widget-code-card">
+                    <h3>Mailing List Widget</h3>
+                    <p>Email subscription form for your mailing list</p>
+                    <div class="code-display">
+                        <button class="btn btn-secondary btn-sm copy-code-btn" style="float: right;">Copy</button>
+                        <pre class="code-content"></pre>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                        <strong>Note:</strong> Emails ending with @mail.i2p are automatically converted to @i2pmail.org
+                    </p>
+                </div>
             </section>
 
             <!-- Feature Requests Section -->
@@ -88,18 +241,171 @@
                 <div id="features-list" class="content-list">
                     <div class="loading">Loading feature requests...</div>
                 </div>
+
+                <!-- Edit Feature Modal -->
+                <div id="edit-feature-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Edit Feature Request</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <form id="edit-feature-form">
+                            <input type="hidden" id="edit-feature-id">
+                            <div class="form-group">
+                                <label for="edit-feature-title">Title *</label>
+                                <input type="text" id="edit-feature-title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-feature-description">Description *</label>
+                                <textarea id="edit-feature-description" rows="5" required></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Status Change Modal -->
+                <div id="status-change-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Change Feature Status</h3>
+                            <button class="modal-close" onclick="cancelStatusChange()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="status-change-feature-id">
+                            <input type="hidden" id="status-change-new-status">
+                            <p style="margin-bottom: 15px; color: #666;">
+                                Would you like to add a message for subscribers? This will be included in the email notification sent to everyone subscribed to this feature.
+                            </p>
+                            <div class="form-group">
+                                <label for="status-change-message">Message (optional)</label>
+                                <textarea id="status-change-message" rows="4" placeholder="Let subscribers know about this status change..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="cancelStatusChange()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="submitStatusChange()">Update Status</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Subscribers Modal -->
+                <div id="view-subscribers-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Subscribers</h3>
+                            <button class="modal-close">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="subscribers-list">
+                                <div class="loading">Loading subscribers...</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary modal-close">Close</button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Document Feedback Section -->
             <section id="feedback-section" class="admin-section">
                 <div class="section-header">
-                    <h2>Document Feedback Stats</h2>
+                    <h2>Document Feedback</h2>
+                    <button class="btn btn-secondary" id="refresh-feedback-btn">Refresh</button>
                 </div>
 
-                <div class="info-box">
-                    <p>Document feedback is tracked automatically. Thumbs down feedback triggers email notifications.</p>
-                    <p>To view stats for a specific document, use the API endpoint:</p>
-                    <code>GET /api/feedback/{document_id}/stats</code>
+                <!-- Stats Summary -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="stat-card" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Total Documents</div>
+                        <div style="font-size: 28px; font-weight: 600;" id="stat-total-docs">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #d4edda; padding: 20px; border-radius: 8px; border: 1px solid #c3e6cb;">
+                        <div style="font-size: 14px; color: #155724; margin-bottom: 5px;">👍 Thumbs Up</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #155724;" id="stat-thumbs-up">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                        <div style="font-size: 14px; color: #721c24; margin-bottom: 5px;">👎 Thumbs Down</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #721c24;" id="stat-thumbs-down">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #d1ecf1; padding: 20px; border-radius: 8px; border: 1px solid #bee5eb;">
+                        <div style="font-size: 14px; color: #0c5460; margin-bottom: 5px;">Satisfaction Rate</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #0c5460;" id="stat-satisfaction">-</div>
+                    </div>
+                </div>
+
+                <!-- Document Stats Table -->
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 30px;">
+                    <h3 style="margin-top: 0;">Documents by Feedback</h3>
+                    <div id="feedback-docs-list" style="overflow-x: auto;">
+                        <div class="loading">Loading feedback stats...</div>
+                    </div>
+                </div>
+
+                <!-- Recent Detailed Feedback -->
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <h3 style="margin-top: 0;">Recent Feedback with Messages</h3>
+                    <div id="feedback-messages-list">
+                        <div class="loading">Loading recent feedback...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Email Stats Section -->
+            <section id="emails-section" class="admin-section">
+                <div class="section-header">
+                    <h2>Email Statistics</h2>
+                    <button class="btn btn-secondary" id="refresh-email-btn">Refresh</button>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="stat-card" style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Total Sent</div>
+                        <div style="font-size: 28px; font-weight: 600;" id="stat-email-total">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #d4edda; padding: 20px; border-radius: 8px; border: 1px solid #c3e6cb;">
+                        <div style="font-size: 14px; color: #155724; margin-bottom: 5px;">✓ Successful</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #155724;" id="stat-email-success">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8d7da; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                        <div style="font-size: 14px; color: #721c24; margin-bottom: 5px;">✗ Failed</div>
+                        <div style="font-size: 28px; font-weight: 600; color: #721c24;" id="stat-email-failed">-</div>
+                    </div>
+                    <div class="stat-card" style="background: #d1ecf1; padding: 20px; border-radius: 8px; border: 1px solid #bee5eb;">
+                        <div style="font-size: 14px; color: #0c5460; margin-bottom: 5px;">Last Sent</div>
+                        <div style="font-size: 16px; font-weight: 600; color: #0c5460;" id="stat-email-last">-</div>
+                    </div>
+                </div>
+
+                <!-- Recent Emails -->
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <h3 style="margin-top: 0;">Recent Email Logs</h3>
+                    <div id="email-logs-list" style="overflow-x: auto;">
+                        <div class="loading">Loading email logs...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="admin-section">
+                <div class="section-header">
+                    <h2>System Settings</h2>
+                    <button class="btn btn-primary" id="save-settings-btn">Save Changes</button>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <strong>⚠️ Warning:</strong> Changing these settings requires restarting the application to take effect.
+                    </div>
+
+                    <div id="settings-form">
+                        <div class="loading">Loading settings...</div>
+                    </div>
                 </div>
             </section>
         </main>

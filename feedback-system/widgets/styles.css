@@ -426,6 +426,343 @@
     color: #999;
 }
 
+.feature-actions {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #dee2e6;
+}
+
+.feature-comments-toggle {
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.feature-comments-toggle:hover {
+    color: #0052a3;
+    text-decoration: underline;
+}
+
+.comment-count-badge {
+    background: #0066cc;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+
+/* Comments Section */
+
+.feature-comments-section {
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.comments-list {
+    margin-bottom: 15px;
+}
+
+.comments-empty {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.comment-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.comment-item:last-child {
+    margin-bottom: 0;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #999;
+}
+
+.comment-text {
+    color: #555;
+    line-height: 1.5;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Comment Form */
+
+.comment-form {
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.comment-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.comment-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-name,
+.comment-email {
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.comment-name:focus,
+.comment-email:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.comment-submit-btn {
+    padding: 10px 20px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.comment-submit-btn:hover {
+    background: #0052a3;
+}
+
+.comment-submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .comment-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Feature List Header */
+
+.features-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.features-submit-btn-link {
+    padding: 10px 18px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.features-submit-btn-link:hover {
+    background: #0052a3;
+}
+
+/* Modal Styles */
+
+.features-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.features-modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+.features-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+.features-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 2;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.features-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.features-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
+}
+
+.features-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.features-modal-close:hover {
+    color: #333;
+}
+
+.features-form {
+    padding: 20px;
+}
+
+.features-form-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 0;
+}
+
+.features-form-checkbox input[type="checkbox"] {
+    margin: 3px 0 0 0;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.features-form-checkbox span {
+    flex: 1;
+    line-height: 1.5;
+    color: #555;
+    font-size: 14px;
+}
+
+.features-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.features-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex: 1;
+    max-width: 180px;
+}
+
+.features-btn-primary {
+    background: #0066cc;
+    color: white;
+}
+
+.features-btn-primary:hover {
+    background: #0052a3;
+}
+
+.features-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.features-btn-secondary:hover {
+    background: #5a6268;
+}
+
 /* ==================== Responsive ==================== */
 
 @media (max-width: 600px) {
@@ -445,5 +782,113 @@
 
     .feature-upvote {
         align-self: flex-start;
+    }
+
+    .features-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .features-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .features-modal-footer {
+        flex-direction: column;
+    }
+
+    .features-btn {
+        width: 100%;
+    }
+}
+
+/* ==================== Mailing List Widget ==================== */
+
+.mailing-list-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    max-width: 100%;
+}
+
+.mailing-list-form {
+    width: 100%;
+}
+
+.mailing-list-input-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mailing-list-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.mailing-list-input:focus {
+    outline: none;
+    border-color: #0066cc;
+}
+
+.mailing-list-button {
+    padding: 12px 24px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.mailing-list-button:hover:not(:disabled) {
+    background: #0052a3;
+}
+
+.mailing-list-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mailing-list-message {
+    margin-top: 12px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.mailing-list-message-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.mailing-list-message-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 600px) {
+    .mailing-list-input-group {
+        flex-direction: column;
+    }
+
+    .mailing-list-input {
+        min-width: 100%;
+    }
+
+    .mailing-list-button {
+        width: 100%;
     }
 }

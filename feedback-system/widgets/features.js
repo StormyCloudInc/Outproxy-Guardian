@@ -18,12 +18,13 @@
     class FeaturesWidget {
         constructor(container) {
             this.container = container;
-            this.apiUrl = container.getAttribute('data-api-url') || 'http://localhost:5000';
+            this.apiUrl = container.getAttribute('data-api-url') || 'https://feedback.stormycloud.org';
             this.mode = container.getAttribute('data-mode') || 'both';
             this.status = container.getAttribute('data-status') || null;
             this.maxItems = parseInt(container.getAttribute('data-max-items')) || 10;
 
             this.upvotedFeatures = this.loadUpvotedFeatures();
+            this.commentsCache = {}; // Cache for loaded comments
 
             this.init();
         }
@@ -105,12 +106,16 @@
 
                 if (response.ok) {
                     this.showMessage('Feature request submitted successfully!', 'success');
-                    // Clear form
-                    const form = this.container.querySelector('.features-form');
-                    if (form) form.reset();
+                    // Close modal
+                    this.closeModal();
                     // Reload list
                     await this.loadFeatures();
                     this.updateFeatureList();
+
+                    // Handle subscription if email provided and subscribe checked
+                    if (formData.subscribe && formData.email && data.feature && data.feature.id) {
+                        await this.subscribeToFeature(data.feature.id, formData.email);
+                    }
                 } else {
                     this.showMessage(data.error || 'Failed to submit feature', 'error');
                 }
@@ -141,6 +146,9 @@
                     this.showMessage('Upvote recorded!', 'success');
                     await this.loadFeatures();
                     this.updateFeatureList();
+
+                    // Prompt user to subscribe for updates
+                    setTimeout(() => this.promptSubscription(featureId), 1000);
                 } else {
                     this.showMessage(data.error || 'Failed to upvote', 'error');
                 }
@@ -150,18 +158,186 @@
             }
         }
 
+        async subscribeToFeature(featureId, email) {
+            try {
+                const response = await fetch(`${this.apiUrl}/api/features/${featureId}/subscribe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                if (response.ok) {
+                    this.showMessage('Subscribed! You\'ll receive updates via email.', 'success');
+                } else {
+                    const data = await response.json();
+                    console.error('Failed to subscribe:', data.error);
+                }
+            } catch (error) {
+                console.error('Failed to subscribe:', error);
+            }
+        }
+
+        promptSubscription(featureId) {
+            // Check if user has already been prompted for this feature
+            const prompted = localStorage.getItem(`prompted_subscribe_${featureId}`);
+            if (prompted) {
+                return;
+            }
+
+            // Mark as prompted
+            localStorage.setItem(`prompted_subscribe_${featureId}`, 'true');
+
+            // Open subscribe modal
+            this.openSubscribeModal(featureId);
+        }
+
+        openSubscribeModal(featureId) {
+            const modal = this.container.querySelector('#subscribe-modal');
+            const featureIdInput = this.container.querySelector('#subscribe-feature-id');
+            const emailInput = this.container.querySelector('#subscribe-email');
+
+            if (modal && featureIdInput && emailInput) {
+                featureIdInput.value = featureId;
+                emailInput.value = '';
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        closeSubscribeModal() {
+            const modal = this.container.querySelector('#subscribe-modal');
+            const form = this.container.querySelector('#subscribe-form');
+
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+                if (form) form.reset();
+            }
+        }
+
+        async loadComments(featureId) {
+            try {
+                const response = await fetch(`${this.apiUrl}/api/features/${featureId}/comments`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to load comments');
+                }
+
+                const data = await response.json();
+                this.commentsCache[featureId] = data.comments || [];
+                return this.commentsCache[featureId];
+            } catch (error) {
+                console.error('Failed to load comments:', error);
+                this.commentsCache[featureId] = [];
+                return [];
+            }
+        }
+
+        async submitComment(featureId, commentData) {
+            try {
+                const response = await fetch(`${this.apiUrl}/api/features/${featureId}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(commentData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    this.showMessage('Comment posted successfully!', 'success');
+                    // Reload comments
+                    await this.loadComments(featureId);
+                    // Update the comments display for this feature
+                    await this.updateFeatureComments(featureId);
+                    return true;
+                } else {
+                    this.showMessage(data.error || 'Failed to post comment', 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Failed to submit comment:', error);
+                this.showMessage('Network error. Please try again.', 'error');
+                return false;
+            }
+        }
+
+        async toggleComments(featureId) {
+            const commentsSection = this.container.querySelector(`#comments-${featureId}`);
+            const toggleBtn = this.container.querySelector(`[data-toggle-comments="${featureId}"]`);
+
+            if (!commentsSection) return;
+
+            if (commentsSection.style.display === 'none' || !commentsSection.style.display) {
+                // Load comments if not already loaded
+                if (!this.commentsCache[featureId]) {
+                    await this.loadComments(featureId);
+                }
+                await this.updateFeatureComments(featureId);
+                commentsSection.style.display = 'block';
+                if (toggleBtn) toggleBtn.textContent = '▼ Hide Comments';
+            } else {
+                commentsSection.style.display = 'none';
+                if (toggleBtn) toggleBtn.textContent = `▶ Show Comments (${this.commentsCache[featureId]?.length || 0})`;
+            }
+        }
+
+        async updateFeatureComments(featureId) {
+            const commentsContainer = this.container.querySelector(`#comments-list-${featureId}`);
+            if (!commentsContainer) return;
+
+            const comments = this.commentsCache[featureId] || [];
+
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = '<div class="comments-empty">No comments yet. Be the first to comment!</div>';
+            } else {
+                commentsContainer.innerHTML = comments.map(comment => this.renderComment(comment)).join('');
+            }
+
+            // Update comment count badge
+            const countBadge = this.container.querySelector(`[data-comment-count="${featureId}"]`);
+            if (countBadge) {
+                countBadge.textContent = comments.length;
+                if (comments.length === 0) {
+                    countBadge.style.display = 'none';
+                } else {
+                    countBadge.style.display = 'inline-block';
+                }
+            }
+        }
+
+        renderComment(comment) {
+            const authorName = this.escapeHtml(comment.author_name || 'Anonymous');
+            const commentText = this.escapeHtml(comment.comment_text);
+            const date = this.formatDate(comment.created_at);
+
+            return `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">${authorName}</span>
+                        <span class="comment-date">${date}</span>
+                    </div>
+                    <div class="comment-text">${commentText}</div>
+                </div>
+            `;
+        }
+
         render() {
             let html = '<div class="features-widget">';
 
-            // Submit form
-            if (this.mode === 'submit' || this.mode === 'both') {
-                html += this.renderSubmitForm();
-            }
-
-            // Feature list
+            // Feature list (always shown)
             if (this.mode === 'list' || this.mode === 'both') {
                 html += this.renderFeatureList();
             }
+
+            // Submit form in modal
+            html += this.renderModal();
+
+            // Subscribe modal
+            html += this.renderSubscribeModal();
 
             html += '<div class="features-message"></div>';
             html += '</div>';
@@ -170,6 +346,85 @@
 
             // Add event listeners
             this.attachEventListeners();
+        }
+
+        renderModal() {
+            return `
+                <div class="features-modal" id="features-modal" style="display: none;">
+                    <div class="features-modal-overlay"></div>
+                    <div class="features-modal-content">
+                        <div class="features-modal-header">
+                            <h3>Submit a Feature Request</h3>
+                            <button class="features-modal-close">&times;</button>
+                        </div>
+                        <form class="features-form" id="feature-submit-form">
+                            <div class="features-form-group">
+                                <label for="feature-title">Title *</label>
+                                <input type="text" id="feature-title" name="title" required
+                                       placeholder="Brief description of the feature">
+                            </div>
+                            <div class="features-form-group">
+                                <label for="feature-description">Description *</label>
+                                <textarea id="feature-description" name="description" required
+                                          placeholder="Detailed explanation of what you'd like to see"
+                                          rows="4"></textarea>
+                            </div>
+                            <div class="features-form-row">
+                                <div class="features-form-group">
+                                    <label for="feature-name">Your Name (optional)</label>
+                                    <input type="text" id="feature-name" name="name"
+                                           placeholder="Anonymous">
+                                </div>
+                                <div class="features-form-group">
+                                    <label for="feature-email">Email (optional)</label>
+                                    <input type="email" id="feature-email" name="email"
+                                           placeholder="For updates on your request">
+                                </div>
+                            </div>
+                            <div class="features-form-group" style="margin-bottom: 0;">
+                                <label class="features-form-checkbox">
+                                    <input type="checkbox" id="feature-subscribe" name="subscribe">
+                                    <span>Notify me when the status of this feature changes</span>
+                                </label>
+                            </div>
+                        </form>
+                        <div class="features-modal-footer">
+                            <button type="submit" form="feature-submit-form" class="features-btn features-btn-primary">Submit Feature</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        renderSubscribeModal() {
+            return `
+                <div class="features-modal" id="subscribe-modal" style="display: none;">
+                    <div class="features-modal-overlay"></div>
+                    <div class="features-modal-content" style="max-width: 450px;">
+                        <div class="features-modal-header">
+                            <h3>Get Status Updates</h3>
+                            <button class="subscribe-modal-close">&times;</button>
+                        </div>
+                        <div style="padding: 20px;">
+                            <p style="margin-bottom: 20px; color: #555; line-height: 1.6;">
+                                Want to be notified when the status of this feature changes? Enter your email below.
+                            </p>
+                            <form id="subscribe-form">
+                                <input type="hidden" id="subscribe-feature-id" value="">
+                                <div class="features-form-group">
+                                    <label for="subscribe-email">Email Address *</label>
+                                    <input type="email" id="subscribe-email" name="email" required
+                                           placeholder="your@email.com" style="width: 100%;">
+                                </div>
+                                <div class="features-modal-footer" style="border-top: none; padding: 0; margin-top: 20px;">
+                                    <button type="button" class="features-btn features-btn-secondary subscribe-modal-close">No Thanks</button>
+                                    <button type="submit" class="features-btn features-btn-primary">Subscribe</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         renderSubmitForm() {
@@ -209,7 +464,10 @@
         renderFeatureList() {
             let html = `
                 <div class="features-list">
-                    <h3 class="features-list-title">Feature Requests</h3>
+                    <div class="features-list-header">
+                        <h3 class="features-list-title">Feature Requests</h3>
+                        <button class="features-submit-btn-link">+ Submit Feature Request</button>
+                    </div>
             `;
 
             if (!this.features || this.features.length === 0) {
@@ -240,6 +498,24 @@
                                     ${feature.submitter_name ? `by ${this.escapeHtml(feature.submitter_name)} • ` : ''}
                                     ${this.formatDate(feature.created_at)}
                                 </div>
+                                <div class="feature-actions">
+                                    <button class="feature-comments-toggle" data-toggle-comments="${feature.id}">
+                                        ▶ Show Comments <span class="comment-count-badge" data-comment-count="${feature.id}" style="display: none;">0</span>
+                                    </button>
+                                </div>
+                                <div class="feature-comments-section" id="comments-${feature.id}" style="display: none;">
+                                    <div class="comments-list" id="comments-list-${feature.id}">
+                                        <div class="comments-empty">No comments yet. Be the first to comment!</div>
+                                    </div>
+                                    <form class="comment-form" data-feature-id="${feature.id}">
+                                        <textarea class="comment-input" name="comment" placeholder="Add your comment..." rows="3" required minlength="10" maxlength="2000"></textarea>
+                                        <div class="comment-form-row">
+                                            <input type="text" class="comment-name" name="name" placeholder="Your name (optional)" maxlength="100">
+                                            <input type="email" class="comment-email" name="email" placeholder="Email (optional)" maxlength="255">
+                                        </div>
+                                        <button type="submit" class="comment-submit-btn">Post Comment</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -263,10 +539,41 @@
             if (newItems) {
                 listContainer.innerHTML = newItems.innerHTML;
                 this.attachUpvoteListeners();
+                this.attachCommentListeners();
+
+                // Reload comment counts
+                this.features.forEach(async feature => {
+                    await this.loadComments(feature.id);
+                    this.updateFeatureComments(feature.id);
+                });
             }
         }
 
         attachEventListeners() {
+            // Submit button to open modal
+            const submitBtn = this.container.querySelector('.features-submit-btn-link');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', () => {
+                    this.openModal();
+                });
+            }
+
+            // Modal close buttons
+            const closeButtons = this.container.querySelectorAll('.features-modal-close');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.closeModal();
+                });
+            });
+
+            // Modal overlay click to close
+            const overlay = this.container.querySelector('.features-modal-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    this.closeModal();
+                });
+            }
+
             // Form submission
             const form = this.container.querySelector('.features-form');
             if (form) {
@@ -276,13 +583,97 @@
                         title: form.title.value,
                         description: form.description.value,
                         name: form.name.value,
-                        email: form.email.value
+                        email: form.email.value,
+                        subscribe: form.subscribe.checked
                     };
                     this.submitFeature(formData);
                 });
             }
 
+            // Subscribe modal close buttons
+            const subscribeCloseButtons = this.container.querySelectorAll('.subscribe-modal-close');
+            subscribeCloseButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.closeSubscribeModal();
+                });
+            });
+
+            // Subscribe modal overlay click to close
+            const subscribeOverlay = this.container.querySelector('#subscribe-modal .features-modal-overlay');
+            if (subscribeOverlay) {
+                subscribeOverlay.addEventListener('click', () => {
+                    this.closeSubscribeModal();
+                });
+            }
+
+            // Subscribe form submission
+            const subscribeForm = this.container.querySelector('#subscribe-form');
+            if (subscribeForm) {
+                subscribeForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const featureId = parseInt(this.container.querySelector('#subscribe-feature-id').value);
+                    const email = this.container.querySelector('#subscribe-email').value.trim();
+
+                    if (email && email.includes('@')) {
+                        this.subscribeToFeature(featureId, email);
+                        this.closeSubscribeModal();
+                    } else {
+                        this.showMessage('Please enter a valid email address', 'error');
+                    }
+                });
+            }
+
             this.attachUpvoteListeners();
+            this.attachCommentListeners();
+        }
+
+        attachCommentListeners() {
+            // Comment toggle buttons
+            const toggleBtns = this.container.querySelectorAll('.feature-comments-toggle');
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const featureId = parseInt(btn.getAttribute('data-toggle-comments'));
+                    this.toggleComments(featureId);
+                });
+            });
+
+            // Comment forms
+            const commentForms = this.container.querySelectorAll('.comment-form');
+            commentForms.forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const featureId = parseInt(form.getAttribute('data-feature-id'));
+                    const commentData = {
+                        comment: form.comment.value.trim(),
+                        name: form.name.value.trim() || null,
+                        email: form.email.value.trim() || null
+                    };
+
+                    const success = await this.submitComment(featureId, commentData);
+                    if (success) {
+                        form.reset(); // Clear the form
+                    }
+                });
+            });
+        }
+
+        openModal() {
+            const modal = this.container.querySelector('.features-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        closeModal() {
+            const modal = this.container.querySelector('.features-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+                // Clear form
+                const form = this.container.querySelector('.features-form');
+                if (form) form.reset();
+            }
         }
 
         attachUpvoteListeners() {
