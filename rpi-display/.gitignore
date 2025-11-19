@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Assets (user should add their own mascot)
+assets/*.gif
+assets/*.png
+assets/*.jpg
+!assets/MASCOT_README.txt
+
+# Logs
+*.log
+
+# Local config overrides
+config/config.local.json

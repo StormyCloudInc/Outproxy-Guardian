@@ -1,0 +1,8 @@
+{
+  "fullscreen": true,
+  "i2p_host": "127.0.0.1",
+  "i2p_port": 7650,
+  "i2p_password": "itoopie",
+  "update_interval": 2000,
+  "mascot_path": "assets/i2p_mascot.gif"
+}
